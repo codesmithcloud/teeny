@@ -1,4 +1,4 @@
-name: Build OCI image for multiple platforms on runners with the appropriate architecture
+name: Native multi-platform OCI build
 
 on:
   workflow_call:
@@ -11,6 +11,12 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
+permissions:
+    contents: read
+    packages: write
+    attestations: write
+    id-token: write
+
 
 jobs:
   build:
@@ -22,12 +28,6 @@ jobs:
         architecture:
           - amd64
           - arm64
-
-    permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
 
     steps:
       - name: Checkout
@@ -55,7 +55,7 @@ jobs:
         id: push
         uses: docker/build-push-action@v6
         with:
-          context: ./
+          context: ./build
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -85,7 +85,7 @@ jobs:
           retention-days: 1
 
 
-  multi_platform_index:
+  oci-index:
     name: Push multi-platform OCI index
     runs-on: ubuntu-latest
     needs: build
@@ -124,6 +124,6 @@ jobs:
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
 
-      - name: Inspect Image
+      - name: Inspect image
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
