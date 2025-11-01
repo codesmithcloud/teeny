@@ -7,7 +7,7 @@ RUN apk add gcc musl-dev make perl ncurses-dev
 # Download busybox sources
 RUN wget https://github.com/mirror/busybox/archive/refs/tags/1_36_1.tar.gz \
   && tar xzf 1_36_1.tar.gz \
-  && mv busybox-1_36_1 /busybox
+  && mv busybox-1_36_1 /compile
 
 WORKDIR /compile
 
