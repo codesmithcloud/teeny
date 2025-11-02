@@ -16,10 +16,12 @@ jobs:
       uses: actions/checkout@v5
       with:
         fetch-depth: 0
+
     - name: Determine version
       id: semantic
       uses: paulhatch/semantic-version@v5.4.0
       with:
+        tag_prefix: v
         debug: true
     - name: Tag git repo with new version
       run: |
@@ -45,7 +47,7 @@ jobs:
       - name: Get previous tag
         id: previous
         run: |
-          name=$(git --no-pager tag --sort=creatordate --merged refs/tags/${{ needs.tag.outputs.version }} | tail -2 | head -1)
+          name=$(git --no-pager tag --sort=creatordate --merged refs/tags/${{ needs.tag.outputs.version-tag }} | tail -2 | head -1)
           echo "tag=$name" >> $GITHUB_OUTPUT
 
       - name: Update changelog
@@ -53,8 +55,8 @@ jobs:
         uses: requarks/changelog-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fromTag: ${{ needs.tag.outputs.version }}
-          toTag: ${{ steps.previous.outputs.tag }}
+          fromTag: ${{ steps.previous.outputs.tag }}
+          toTag: ${{ needs.tag.outputs.version-tag }}
           writeToFile: false
 
       - name: Create Release
@@ -62,7 +64,7 @@ jobs:
         with:
           allowUpdates: false
           makeLatest: true
-          name: ${{ steps.previous.outputs.tag }}
+          name: ${{ needs.tag.outputs.version-tag }}
           body: ${{ steps.changelog.outputs.changes }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.previous.outputs.tag }}
+          tag: ${{ needs.tag.outputs.version-tag }}
