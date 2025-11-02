@@ -1,0 +1,23 @@
+name: Build, package and push teeny OCI image
+
+on:
+  push:
+    branches:
+      - main
+      - workflows
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+
+jobs:
+  build-push:
+    name: Build and push teeny
+    uses: codesmithcloud/ci/.github/workflows/multi-platform-oci-build.yml@main
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
