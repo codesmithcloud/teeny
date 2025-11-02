@@ -26,7 +26,7 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Actions"
         git tag -a "${{ steps.semantic.outputs.version_tag }}" -m "Release ${{ steps.semantic.outputs.version_tag }}"
-        git push tags ${{ steps.semantic.outputs.version_tag }}
+        git push origin tag ${{ steps.semantic.outputs.version_tag }}
 
   deploy:
     runs-on: ubuntu-latest
