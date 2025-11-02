@@ -12,7 +12,8 @@ env:
 
 
 jobs:
-  build:
+  build-push:
+    name: Build and push teeny
     uses: codesmithcloud/ci/.github/workflows/multi-platform-oci-build.yml@main
     secrets: inherit
     permissions:
