@@ -36,4 +36,4 @@ USER www
 WORKDIR /www
 
 # Run busybox httpd
-CMD ["/busybox", "httpd", "-f", "-v", "-p", "80"]
+CMD ["/busybox", "httpd", "-f", "-vv", "-p", "80"]
